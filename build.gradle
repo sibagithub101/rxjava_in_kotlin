@@ -1,0 +1,12 @@
+buildscript {
+    dependencies {
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.45'
+    }
+}
+plugins {
+    id 'com.android.application' version '8.0.0' apply false  //7.4.2
+    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
+}
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
