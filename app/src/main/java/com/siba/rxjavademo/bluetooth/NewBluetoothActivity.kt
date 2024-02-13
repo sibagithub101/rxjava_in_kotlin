@@ -10,17 +10,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.siba.rxjavademo.databinding.ActivityNewBluetoothBinding
-import java.io.IOException
 import java.util.UUID
-
 
 class NewBluetoothActivity : AppCompatActivity() {
 
@@ -44,6 +45,7 @@ class NewBluetoothActivity : AppCompatActivity() {
     }
 
   // after getting run-time permission initlizeBluetooth
+    @RequiresApi(Build.VERSION_CODES.S)
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             val result = it.entries.all { entry ->
@@ -77,6 +79,7 @@ class NewBluetoothActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun initlizeBluetooth() {
         val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
@@ -98,8 +101,8 @@ class NewBluetoothActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun discoverBlueToothDevice() {
         val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
-        val adapter = DeviceAdapter(pairedDevices?.toList() ?: emptyList()){getDevice->
-            connectToDevice(getDevice)
+        val adapter = DeviceAdapter(pairedDevices?.toList() ?: emptyList()){ getDevice->
+            connectToDevice(getDevice,pairedDevices?.toList()?: emptyList())
         }
         binding.devicesRecyclerView.adapter = adapter
     }
@@ -108,44 +111,72 @@ class NewBluetoothActivity : AppCompatActivity() {
      * Connect to device through UUIDS
      * @param device
      */
-        @SuppressLint("MissingPermission")
-        private fun connectToDevice(device: BluetoothDevice) {
-            val uuidList= device.uuids
-
-                val uuid: UUID = uuidList[0].uuid
-                try {
-                    bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(uuid)
-                    val connectThread = Thread {
-                        try {
-                            bluetoothSocket.connect()
-                        } catch (e: IOException) {
-                            // Log the exception or handle it appropriately
-                            e.printStackTrace()
+    @SuppressLint("MissingPermission")
+    private fun connectToDevice(device: BluetoothDevice, bluetoothDevices: List<BluetoothDevice>) {
+        var macAddressMatched = false
+        bluetoothDevices.forEach {getBluetoothDevice->
+            if(device.address.equals(getBluetoothDevice.address)){
+                // Create a Handler to handle BluetoothService messages
+                val handler = object : Handler(Looper.getMainLooper()) {
+                    override fun handleMessage(msg: Message) {
+                        // Handle BluetoothService messages
+                        when (msg.what) {
+                            BluetoothService.MESSAGE_STATE_CHANGE -> {
+                                Log.e("NewBlueToothTAG", "getting_message${msg.arg1}")
+                            }
                         }
                     }
-                    connectThread.start()
-                    connectThread.join(5000)
-                    Toast.makeText(this, "Connected to ${device.name}", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(this, e.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
+                // Create an instance of BluetoothService
+                val bluetoothService = BluetoothService(handler)
+                // Start the BluetoothService
+                bluetoothService.start()
+                // Connect to the Bluetooth device
+                bluetoothService.connect(device)
+                val data = "Hello, Bluetooth!"
+                val byteData = data.toByteArray()
+
+                 bluetoothService.sendMessage("Hellow bluetooth","UTF-8")
+                bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001124-0000-1000-8000-00805F9B34FB"))
+                bluetoothService.connected(bluetoothSocket)
+
+                val currentState = bluetoothService.state
+                val isConnected = currentState == BluetoothService.STATE_CONNECTED
+                if (isConnected) {
+                    // Device is connected
+                    Toast.makeText(this, "Device Connected", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Device is not connected
+                    Toast.makeText(this, "Device is not connected $currentState", Toast.LENGTH_SHORT).show()
+                }
+                macAddressMatched = true
+                return@forEach
+            }
+        }
+
+        if (!macAddressMatched) {
+            Toast.makeText(this, "MAC address did not match", Toast.LENGTH_SHORT).show()
+        }
     }
-
-
     @RequiresApi(Build.VERSION_CODES.S)
     private fun hasBluetoothPermissions(): Boolean {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
                 == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
                 == PackageManager.PERMISSION_GRANTED  && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
-                == PackageManager.PERMISSION_GRANTED)
+                == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN)
+                == PackageManager.PERMISSION_GRANTED
+                )
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun requestBluetoothPermissions() {
-         val permission = arrayOf(Manifest.permission.BLUETOOTH,Manifest.permission.BLUETOOTH_ADMIN,Manifest.permission.BLUETOOTH_CONNECT)
+         val permission = arrayOf(Manifest.permission.BLUETOOTH,Manifest.permission.BLUETOOTH_ADMIN,Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_SCAN)
         permissionLauncher.launch(permission)
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun turnOnBluetooth() {
         if (ContextCompat.checkSelfPermission(
                 this,

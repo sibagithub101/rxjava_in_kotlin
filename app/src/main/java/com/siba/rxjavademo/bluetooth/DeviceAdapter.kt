@@ -30,7 +30,7 @@ class DeviceAdapter(private val devices: List<BluetoothDevice>,
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val device = devices[position]
         holder.deviceNameTextView.text = device.name ?: "Unknown Device"
-        holder.deviceAddressTextView.text = device.address
+        holder.deviceAddressTextView.text = device.address?: "Unknown Error"
         holder.btLayout.setOnClickListener {
             onDeviceClickListener.invoke(device)
         }
