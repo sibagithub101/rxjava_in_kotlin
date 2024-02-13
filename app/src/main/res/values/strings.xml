@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">rxjavademo</string>
+    <string name="allowPermission">Allow Permission to access the App</string>
+    <string name="settingsManuallySet">Click SETTINGS to Manually Set \n Permissions to access the App</string>
+    <string name="changePermissionsInSettings">No, SETTINGS, Change Permissions in Settings</string>
+    <string name="setting">Setting</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
 </resources>

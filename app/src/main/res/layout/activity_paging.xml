@@ -4,35 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".rxjava.RxJavaActivity">
+    tools:context=".paging.PagingActivity">
 
-    <TextView
-        android:id="@+id/getData"
+    <Button
+        android:id="@+id/btnReport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Get Report Data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnGetData"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ivReportData"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" Submit "
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/getData" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnReport" />
 
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/btnGetData"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/ivReportData"
+        app:layout_constraintEnd_toEndOf="@+id/ivReportData"
+        app:layout_constraintStart_toStartOf="@+id/ivReportData"
+        app:layout_constraintTop_toBottomOf="@+id/btnReport" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

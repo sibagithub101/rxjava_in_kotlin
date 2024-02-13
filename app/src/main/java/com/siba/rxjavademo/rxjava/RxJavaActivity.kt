@@ -1,4 +1,4 @@
-package com.siba.rxjavademo
+package com.siba.rxjavademo.rxjava
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,19 +6,17 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import com.siba.rxjavademo.databinding.ActivityMainBinding
-import com.siba.rxjavademo.rxjava.FetchReqest
-import com.siba.rxjavademo.rxjava.FetchResponse
-import com.siba.rxjavademo.rxjava.ReportViewModel
+import com.siba.rxjavademo.network.MainViewModel
+import com.siba.rxjavademo.network.NetworkConstants.Companion.FETCH_REPORT_API
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class RxJavaActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
-    private val reportViewModel: ReportViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
     private val disposal = CompositeDisposable()
 
 
@@ -31,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             binding.progress.visibility = View.VISIBLE
             val fetchReqest = FetchReqest("common", "technewadmin")
 
-            disposal.add(reportViewModel.fetchReport(fetchReqest)
+            disposal.add(mainViewModel.fetchDynamicData(url = FETCH_REPORT_API, fetchReqest = fetchReqest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally{ binding.progress.visibility = View.GONE }   // progress dialog visibility if is success or failure

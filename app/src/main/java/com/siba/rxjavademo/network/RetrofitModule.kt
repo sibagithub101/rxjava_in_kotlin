@@ -1,4 +1,4 @@
-package com.siba.rxjavademo.rxjava
+package com.siba.rxjavademo.network
 
 import dagger.Module
 import dagger.Provides
@@ -15,7 +15,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://sdui-module-prod.iserveu.tech/report/")
+            .baseUrl("https://sdui-module-prod.iserveu.tech/")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
