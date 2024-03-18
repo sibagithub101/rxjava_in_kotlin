@@ -133,6 +133,8 @@ class NewBluetoothActivity : AppCompatActivity() {
                 bluetoothService.start()
                 // Connect to the Bluetooth device
                 bluetoothService.connect(device)
+                device.createBond()
+
                 val data = "Hello, Bluetooth!"
                 val byteData = data.toByteArray()
 

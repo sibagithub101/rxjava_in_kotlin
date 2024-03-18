@@ -27,6 +27,7 @@ class RxJavaActivity : AppCompatActivity() {
 
         binding.btnGetData.setOnClickListener {
             binding.progress.visibility = View.VISIBLE
+
             val fetchReqest = FetchReqest("common", "technewadmin")
 
             disposal.add(mainViewModel.fetchDynamicData(url = FETCH_REPORT_API, fetchReqest = fetchReqest)
