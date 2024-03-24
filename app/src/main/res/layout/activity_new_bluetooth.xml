@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".BluetoothActivity">
+    tools:context=".bluetooth.NewBluetoothActivity">
 
     <Button
         android:id="@+id/btnBluetooth"
@@ -13,18 +13,30 @@
         android:padding="10dp"
         android:layout_margin="20dp"
         android:layout_centerHorizontal="true"
-        android:text="Scan Bluetooth"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Scan Bluetooth" />
+
+    <TextView
+        android:id="@+id/tvCheckCOnnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnBluetooth"
+        android:layout_centerHorizontal="true"
+        android:text="Checking Connection"
+        android:textColor="#FB0808"
+        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/devicesRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btnBluetooth"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvCheckCOnnection"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:padding="16dp"
-        android:layout_margin="10dp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+
 </RelativeLayout>
